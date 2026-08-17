@@ -1,0 +1,15 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
+  "author": "Rishabh Bhatt",
+  "license": "ISC",
+  "description": "Backend for Saree Project",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
