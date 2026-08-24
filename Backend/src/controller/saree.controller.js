@@ -19,7 +19,6 @@ const sareeController = async (req, res) => {
       description,
       sareeImg: result.secure_url,
     });
-    console.log(saree);
     res.status(201).json({
       message: "Saree stored Successfully",
       saree,
@@ -33,13 +32,24 @@ const sareeController = async (req, res) => {
 const getSarees = async (req, res) => {
   try {
     const saree = await sareeModel.find();
-    res.status(200).json({saree});
+    res.status(200).json({ saree });
   } catch (error) {
     console.log(error);
     res.status(400).json({ error: "Error in saree controller" });
   }
 };
+
+const getOneSaree = async (req, res) => {
+  try {
+    const saree = await sareeModel.findOne({_id : req.params.id})
+    res.status(200).json({ saree : saree});
+    
+  } catch (error) {
+    res.status(400).json({ error: "error in saree controller", error });
+  }
+};
 module.exports = {
   sareeController,
   getSarees,
+  getOneSaree,
 };
