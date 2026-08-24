@@ -6,6 +6,7 @@ const authRoutes = require("../src/routes/auth.routes")
 const userRoutes = require("../src/routes/user.routes")
 const adminRoutes = require("../src/routes/admin.routes")
 const sareeRoutes = require("../src/routes/saree.routes")
+const cartRoutes = require("../src/routes/cart.routes")
 
 
 const app = express()
@@ -18,7 +19,8 @@ app.use(cookieParser())
 app.use("/api/auth",authRoutes)
 app.use("/api/fetch",userRoutes)
 app.use("/api/fetch",adminRoutes)
-app.use("/api/submit",sareeRoutes)
+app.use("/api/submit-get",sareeRoutes)
+app.use("/api/getcart",cartRoutes)
 
 
 
