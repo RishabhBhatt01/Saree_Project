@@ -18,7 +18,7 @@ function Footer() {
               to="/"
               className="font-serif text-2xl sm:text-3xl tracking-[0.2em]"
             >
-              SAARÉE
+              ThreadSutra
             </Link>
 
             <p className="mt-3 sm:mt-5 text-sm sm:text-base text-gray-300 leading-relaxed max-w-sm">
