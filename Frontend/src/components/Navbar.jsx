@@ -42,7 +42,7 @@ function Navbar() {
 
           <Link
             to="/"
-            className="text-2xl md:text-3xl font-serif tracking-[0.1em] text-[#7b2949]"
+            className="text-2xl md:text-3xl font-serif tracking-widest text-[#7b2949]"
           >
             Thread<span className="text-[#9b3d5c]">Sutra</span>
           </Link>
