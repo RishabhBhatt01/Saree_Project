@@ -6,10 +6,11 @@ const cartModel = require("../models/cart.models");
 const cartController = async (req, res) => {
   try {
     const userId = req.userId;
-
+    console.log("running");
+    
     // saree id and quantity will come from frontend
     const { sareeId, quantity } = req.body;
-    const qty = Number(quantity)
+    const qty = Number(quantity);
 
     // before createing i need to find if a cart exist
 
@@ -24,7 +25,7 @@ const cartController = async (req, res) => {
         items: [
           {
             sareeId,
-            quantity : qty,
+            quantity: qty,
           },
         ],
       });
@@ -52,7 +53,7 @@ const cartController = async (req, res) => {
     }
     cart.items.push({
       sareeId,
-      quantity:qty,
+      quantity: qty,
     });
 
     const updatedCart = await cart.save();
@@ -68,7 +69,9 @@ const cartController = async (req, res) => {
 
 const getCartController = async (req, res) => {
   try {
-    const cart = await cartModel.findOne({ userId: req.userId }).populate("items.sareeId");
+    const cart = await cartModel
+      .findOne({ userId: req.userId })
+      .populate("items.sareeId");
 
     if (!cart) {
       res.status(400).json({ messsage: "Empty cart, please add some items" });
@@ -81,4 +84,4 @@ const getCartController = async (req, res) => {
     res.status(400).json({ messsage: "error in cart controller", cart });
   }
 };
-module.exports = { cartController ,getCartController};
+module.exports = { cartController, getCartController };
