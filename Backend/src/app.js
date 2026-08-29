@@ -8,8 +8,8 @@ const userRoutes = require("../src/routes/user.routes");
 const adminRoutes = require("../src/routes/admin.routes");
 const sareeRoutes = require("../src/routes/saree.routes");
 const cartRoutes = require("../src/routes/cart.routes");
-const orderRoutes = require("../src/routes/order.routes")
-const addressRoutes = require("../src/routes/address.routes")
+const orderRoutes = require("../src/routes/order.routes");
+const addressRoutes = require("../src/routes/address.routes");
 
 const app = express();
 
@@ -29,8 +29,7 @@ app.use("/api/fetch", userRoutes);
 app.use("/api/fetch", adminRoutes);
 app.use("/api/submit-get", sareeRoutes);
 app.use("/api/cart", cartRoutes);
-app.use("/api/order",orderRoutes)
-app.use("/api/address",addressRoutes)
-
+app.use("/api/order", orderRoutes);
+app.use("/api/address", addressRoutes);
 
 module.exports = app;
