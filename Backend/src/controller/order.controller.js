@@ -57,7 +57,6 @@ const orderController = async (req, res) => {
     console.log(error);
     res.status(400).json({
       error: "error in order controller",
-      order,
     });
   }
 };
@@ -65,11 +64,36 @@ const orderController = async (req, res) => {
 const getOrderController = async (req, res) => {
   try {
     const userId = req.userId;
-    const order = await orderModel.findOne({ userId });
-    res.status(200).json({ message: "order fetched successfully", order });
+    const orders = await orderModel.find({ userId });
+    res.status(200).json({ message: "order fetched successfully", orders });
   } catch (error) {
     console.log(error);
     res.status(400).json({ error: "error in getOrderController" });
   }
 };
-module.exports = {orderController,getOrderController};
+
+const getOneOrderController = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const orderId = req.params.orderId;
+
+    const order = await orderModel.findOne({
+      userId,
+      _id: orderId,
+    });
+
+    if (!order) {
+      res.status(400).json({ error: "can't find order" });
+      return;
+    }
+
+    res
+      .status(200)
+      .json({ message: "fetched single order successfully", order });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error: "Error in getOneOrderController" });
+  }
+};
+
+module.exports = { orderController, getOrderController, getOneOrderController };
