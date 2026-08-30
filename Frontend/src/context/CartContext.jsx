@@ -1,91 +1,66 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useCallback } from "react";
+import {
+  addToCart as apiAddToCart,
+  getCart as apiGetCart,
+  updateCartQuantity as apiUpdateCartQuantity,
+  removeFromCart as apiRemoveFromCart,
+} from "../api/client";
+import { useAuth } from "./AuthContext";
 
-const CartContext = createContext();
+const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
-  const [cart, setCart] = useState([]);
+  const { user } = useAuth();
+  const [items, setItems] = useState([]); // populated cart.items from backend
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const addToCart = (product, quantity = 1) => {
-    setCart((currentCart) => {
-      const existingProduct = currentCart.find(
-        (item) => item.id === product.id
-      );
+const refreshCart = useCallback(async (silent = false) => {
+  if (!user) {
+    setItems([]);
+    return;
+  }
+  if (!silent) setLoading(true);
+  setError(null);
+  try {
+    const res = await apiGetCart();
+    setItems(res.data.cart?.items || []);
+  } catch (err) {
+    setItems([]);
+  } finally {
+    if (!silent) setLoading(false);
+  }
+}, [user]);
 
-      if (existingProduct) {
-        return currentCart.map((item) =>
-          item.id === product.id
-            ? {
-                ...item,
-                quantity: item.quantity + quantity,
-              }
-            : item
-        );
-      }
-
-      return [
-        ...currentCart,
-        {
-          ...product,
-          quantity,
-        },
-      ];
-    });
+  const addItem = async (sareeId, quantity = 1) => {
+    await apiAddToCart(sareeId, quantity);
+    await refreshCart(true);
   };
 
-  const removeFromCart = (productId) => {
-    setCart((currentCart) =>
-      currentCart.filter((item) => item.id !== productId)
-    );
+
+  const changeQuantity = async (sareeId, delta) => {
+  await apiUpdateCartQuantity(sareeId, delta);
+  await refreshCart(true);
+};
+
+  const removeItem = async (sareeId) => {
+    await apiRemoveFromCart(sareeId);
+    await refreshCart(true);
   };
 
-  const increaseQuantity = (productId) => {
-    setCart((currentCart) =>
-      currentCart.map((item) =>
-        item.id === productId
-          ? {
-              ...item,
-              quantity: item.quantity + 1,
-            }
-          : item
-      )
-    );
-  };
-
-  const decreaseQuantity = (productId) => {
-    setCart((currentCart) =>
-      currentCart
-        .map((item) =>
-          item.id === productId
-            ? {
-                ...item,
-                quantity: item.quantity - 1,
-              }
-            : item
-        )
-        .filter((item) => item.quantity > 0)
-    );
-  };
-
-  const cartCount = cart.reduce(
-    (total, item) => total + item.quantity,
-    0
-  );
-
-  const cartTotal = cart.reduce(
-    (total, item) => total + item.price * item.quantity,
-    0
-  );
+  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <CartContext.Provider
       value={{
-        cart,
-        addToCart,
-        removeFromCart,
-        increaseQuantity,
-        decreaseQuantity,
-        cartCount,
-        cartTotal,
+        items,
+        loading,
+        error,
+        itemCount,
+        refreshCart,
+        addItem,
+        changeQuantity,
+        removeItem,
       }}
     >
       {children}
@@ -94,5 +69,7 @@ export function CartProvider({ children }) {
 }
 
 export function useCart() {
-  return useContext(CartContext);
+  const ctx = useContext(CartContext);
+  if (!ctx) throw new Error("useCart must be used within CartProvider");
+  return ctx;
 }

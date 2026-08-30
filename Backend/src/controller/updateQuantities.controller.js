@@ -1,4 +1,4 @@
-const cartModel = require("../models/cart.models");
+const cartModel = require("../models/cart.model");
 const updateQuantitiesController = async (req, res) => {
   try {
     //   1. Get userId from req.userId

@@ -1,67 +1,53 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
+import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-
+import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
 import Home from "./pages/Home";
-import Shop from "./pages/Shop";
-import Collections from "./pages/Collection";
-import About from "./pages/About";
-import ProductDetails from "./pages/ProductDetails";
+import ProductDetail from "./pages/ProductDetail";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
-import OrderSuccess from "./pages/OrderSuccess";
-import Wishlist from "./pages/Wishlist";
-import Search from "./pages/Search";
-import Contact from "./pages/Contact";
-import Login from "./pages/Login";
+import AdminAddSaree from "./pages/AdminAddSaree";
 
-import ScrollToTop from "./components/ScrollToTop";
-import Register from "./pages/Register";
-
-function App() {
+export default function App() {
   return (
-    <BrowserRouter>
-
-      <ScrollToTop />
-
+    <div className="min-h-screen flex flex-col">
       <Navbar />
+      <main className="flex-1">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-      <Routes>
+          <Route
+            path="/cart"
+            element={
+              <ProtectedRoute>
+                <Cart />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/checkout"
+            element={
+              <ProtectedRoute>
+                <Checkout />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route path="/" element={<Home />} />
-
-        <Route path="/shop" element={<Shop />} />
-
-        <Route path="/collections" element={<Collections />} />
-
-        <Route path="/about" element={<About />} />
-
-        <Route path="/product/:id" element={<ProductDetails />} />
-
-        <Route path="/cart" element={<Cart />} />
-
-        <Route path="/checkout" element={<Checkout />} />
-
-        <Route path="/order-success" element={<OrderSuccess />} />
-
-        <Route path="/search" element={<Search />} />
-
-        <Route path="/wishlist" element={<Wishlist />} />
-
-        <Route path="/contact" element={<Contact />} />
-
-        {/* LOGIN */}
-        <Route path="/login" element={<Login/>} />
-
-        <Route path="/register" element={<Register/>} />
-
-      </Routes>
-
-      <Footer />
-
-    </BrowserRouter>
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <AdminAddSaree />
+              </AdminRoute>
+            }
+          />
+        </Routes>
+      </main>
+    </div>
   );
 }
-
-export default App;

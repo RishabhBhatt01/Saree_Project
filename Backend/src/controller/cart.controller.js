@@ -1,6 +1,6 @@
 const userModel = require("../models/user.model");
 const sareeModel = require("../models/saree.model");
-const cartModel = require("../models/cart.models");
+const cartModel = require("../models/cart.model");
 
 // we came here from authMiddleware
 const cartController = async (req, res) => {

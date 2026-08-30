@@ -1,4 +1,4 @@
-const cartModel = require("../models/cart.models");
+const cartModel = require("../models/cart.model");
 const removeFromCartController = async (req, res) => {
   try {
     const userId = req.userId;
