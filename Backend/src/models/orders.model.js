@@ -29,6 +29,32 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  shippingAddress: {
+    fullName: {
+      type: String,
+      required: true,
+    },
+    phone: {
+      type: Number,
+      required: true,
+    },
+    addressLine: {
+      type: String,
+      required: true,
+    },
+    city: {
+      type: String,
+      required: true,
+    },
+    state: {
+      type: String,
+      required: true,
+    },
+    pincode: {
+      type: Number,
+      required: true,
+    },
+  },
 });
 
 const Order = new mongoose.model("order", orderSchema);
