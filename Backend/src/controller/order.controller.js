@@ -1,9 +1,9 @@
 const cartModel = require("../models/cart.model");
 const sareeModel = require("../models/saree.model");
 const orderModel = require("../models/orders.model");
+const addressModel = require("../models/address.model");
 const orderController = async (req, res) => {
   try {
-    console.log("in controller");
 
     // Logged-in user
     const userId = req.userId;
@@ -38,11 +38,33 @@ const orderController = async (req, res) => {
       totalAmount += item.price * item.quantity;
     }
 
+    // Selecting Order
+    const { addressId } = req.body;
+    const address = await addressModel.findOne({
+      _id: addressId,
+      userId,
+    });
+
+    if (!address) {
+      res.status(400).json({
+        message: "Can't find the address",
+      });
+      return;
+    }
+
     // Create Order
     const order = await orderModel.create({
       userId,
       items: orderItems,
       totalAmount,
+      shippingAddress: {
+        fullName: address.fullName,
+        phone: address.phone,
+        addressLine: address.addressLine,
+        city: address.city,
+        state: address.state,
+        pincode: address.pincode,
+      },
     });
 
     // Clear Cart
