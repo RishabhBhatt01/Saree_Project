@@ -13,7 +13,7 @@ const addressModel = new mongoose.Schema({
     type: String,
     required: true,
   },
-  adreessLine: {
+  addressLine: {
     type: String,
     required: true,
   },
