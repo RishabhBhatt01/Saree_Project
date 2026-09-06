@@ -10,6 +10,7 @@ const sareeRoutes = require("../src/routes/saree.routes");
 const cartRoutes = require("../src/routes/cart.routes");
 const orderRoutes = require("../src/routes/order.routes");
 const addressRoutes = require("../src/routes/address.routes");
+const adminDashboardRoutes = require("../src/routes/dashboard.routes");
 
 const app = express();
 
@@ -31,5 +32,6 @@ app.use("/api/submit-get", sareeRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/order", orderRoutes);
 app.use("/api/address", addressRoutes);
+app.use("/api/dashboard-data", adminDashboardRoutes);
 
 module.exports = app;
