@@ -43,4 +43,19 @@ export const updateCartQuantity = (sareeId, quantity) =>
 export const removeFromCart = (sareeId) =>
   api.delete(`/api/cart/delete-cart/${sareeId}`);
 
+// ---------- Address ----------
+export const submitAddress = (data) =>
+  api.post("/api/address/submit-address", data);
+
+export const getAddresses = () => api.get("/api/address/get-address");
+
+// ---------- Orders ----------
+export const createOrder = (addressId) =>
+  api.post("/api/order/create-order", { addressId });
+
+export const getOrders = () => api.get("/api/order/get-order");
+
+export const getOneOrder = (orderId) =>
+  api.get(`/api/order/get-one-order/${orderId}`);
+
 export default api;
