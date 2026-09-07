@@ -21,7 +21,6 @@ const addressController = async (req, res) => {
     res.status(400).json({ error: "error in address controller" });
   }
 };
-
 const getAddressController = async (req, res) => { 
   try {
     const userId = req.userId;
