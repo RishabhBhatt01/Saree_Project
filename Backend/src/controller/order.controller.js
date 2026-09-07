@@ -4,7 +4,6 @@ const orderModel = require("../models/orders.model");
 const addressModel = require("../models/address.model");
 const orderController = async (req, res) => {
   try {
-
     // Logged-in user
     const userId = req.userId;
     // Find their Cart
@@ -19,6 +18,7 @@ const orderController = async (req, res) => {
     }
 
     const orderItems = [];
+    const sareeToUpdate = [];
     let totalAmount = 0;
     // Get saree prices
     for (const item of cart.items) {
@@ -27,10 +27,20 @@ const orderController = async (req, res) => {
         res.status(400).json({ message: "can't find the saree" });
         return;
       }
+      if (item.quantity > saree.stock || saree.stock == 0) {
+        res.status(400).json({ message: "Out of Stock" });
+        return;
+      }
+
       orderItems.push({
         sareeId: item.sareeId,
         quantity: item.quantity,
         price: saree.price,
+      });
+
+      sareeToUpdate.push({
+        saree,
+        quantity: item.quantity,
       });
     }
     // Calculate totalAmount
@@ -52,6 +62,8 @@ const orderController = async (req, res) => {
       return;
     }
 
+    // Checking if stock is available , then only we can create an order.
+
     // Create Order
     const order = await orderModel.create({
       userId,
@@ -66,6 +78,11 @@ const orderController = async (req, res) => {
         pincode: address.pincode,
       },
     });
+
+    for (const item of sareeToUpdate) {
+      item.saree.stock -= item.quantity;
+      await item.saree.save();
+    }
 
     // Clear Cart
     cart.items = [];
