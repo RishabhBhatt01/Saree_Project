@@ -3,7 +3,7 @@ const sareeModel = require("../models/saree.model");
 
 const sareeController = async (req, res) => {
   try {
-    const { name, price, fabric, category, description } = req.body;
+    const { name, price, fabric, category, description,stock } = req.body;
     const file = req.file.path;
 
     const result = await cloudinary.uploader.upload(file, {
@@ -17,6 +17,7 @@ const sareeController = async (req, res) => {
       fabric,
       category,
       description,
+      stock,
       sareeImg: result.secure_url,
     });
     res.status(201).json({
