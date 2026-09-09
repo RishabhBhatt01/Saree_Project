@@ -4,7 +4,7 @@ const getAdminOrderController = async (req, res) => {
     // sending last 5 orders...
     const orders = await orderModel.find().sort({ createdAt: -1 }).limit(5);
     res.status(200).json({
-      error: "fetched successfully",
+      message: "fetched successfully",
       orders
     });
   } catch (error) {
