@@ -58,4 +58,11 @@ export const getOrders = () => api.get("/api/order/get-order");
 export const getOneOrder = (orderId) =>
   api.get(`/api/order/get-one-order/${orderId}`);
 
+// ---------- Admin ----------
+export const getAdminDashboardData = () =>
+  api.get("/api/dashboard-data/admin-dashboard-data");
+
+export const getAdminOrders = () =>
+  api.get("/api/admin-order/get-admin-orders");
+
 export default api;
