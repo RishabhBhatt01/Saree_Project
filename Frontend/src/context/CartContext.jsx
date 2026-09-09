@@ -15,33 +15,34 @@ export function CartProvider({ children }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-const refreshCart = useCallback(async (silent = false) => {
-  if (!user) {
-    setItems([]);
-    return;
-  }
-  if (!silent) setLoading(true);
-  setError(null);
-  try {
-    const res = await apiGetCart();
-    setItems(res.data.cart?.items || []);
-  } catch (err) {
-    setItems([]);
-  } finally {
-    if (!silent) setLoading(false);
-  }
-}, [user]);
+  const refreshCart = useCallback(async (silent = false) => {
+    if (!user) {
+      setItems([]);
+      return;
+    }
+    if (!silent) setLoading(true);
+    setError(null);
+    try {
+      const res = await apiGetCart();
+      setItems(res.data.cart?.items || []);
+    } catch (err) {
+      // Backend returns 400 with "Empty cart" when none exists yet —
+      // treat that as an empty cart rather than a hard error.
+      setItems([]);
+    } finally {
+      if (!silent) setLoading(false);
+    }
+  }, [user]);
 
   const addItem = async (sareeId, quantity = 1) => {
     await apiAddToCart(sareeId, quantity);
     await refreshCart(true);
   };
 
-
   const changeQuantity = async (sareeId, delta) => {
-  await apiUpdateCartQuantity(sareeId, delta);
-  await refreshCart(true);
-};
+    await apiUpdateCartQuantity(sareeId, delta);
+    await refreshCart(true);
+  };
 
   const removeItem = async (sareeId) => {
     await apiRemoveFromCart(sareeId);
