@@ -20,7 +20,6 @@ const cartRoutes = require("../src/routes/cart.routes");
 =======
 const orderRoutes = require("../src/routes/order.routes");
 const addressRoutes = require("../src/routes/address.routes");
->>>>>>> e56d7e245ac09a4707888a92c9890b2758bc69c5
 
 const app = express();
 
@@ -52,6 +51,5 @@ app.use("/api/cart", cartRoutes);
 =======
 app.use("/api/order", orderRoutes);
 app.use("/api/address", addressRoutes);
->>>>>>> e56d7e245ac09a4707888a92c9890b2758bc69c5
 
 module.exports = app;

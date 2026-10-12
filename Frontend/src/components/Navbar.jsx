@@ -43,6 +43,12 @@ export default function Navbar() {
             )}
           </Link>
 
+          {user && (
+            <Link to="/orders" className="hover:text-oxblood transition-colors">
+              My Orders
+            </Link>
+          )}
+
           {user ? (
             <div className="flex items-center gap-4">
               <span className="text-ink/60">Hi, {user.username}</span>

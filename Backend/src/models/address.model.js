@@ -13,7 +13,7 @@ const addressModel = new mongoose.Schema({
     type: String,
     required: true,
   },
-  adreessLine: {
+  addressLine: {
     type: String,
     required: true,
   },
@@ -31,5 +31,5 @@ const addressModel = new mongoose.Schema({
   }   
 });
 
-const Address = new mongoose.model("address", addressModel);
+const Address =  mongoose.model("address", addressModel);
 module.exports = Address;

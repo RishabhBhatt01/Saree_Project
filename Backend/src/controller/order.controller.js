@@ -1,10 +1,9 @@
 const cartModel = require("../models/cart.model");
 const sareeModel = require("../models/saree.model");
 const orderModel = require("../models/orders.model");
+const addressModel = require("../models/address.model");
 const orderController = async (req, res) => {
   try {
-    console.log("in controller");
-
     // Logged-in user
     const userId = req.userId;
     // Find their Cart
@@ -19,6 +18,7 @@ const orderController = async (req, res) => {
     }
 
     const orderItems = [];
+    const sareeToUpdate = [];
     let totalAmount = 0;
     // Get saree prices
     for (const item of cart.items) {
@@ -27,10 +27,20 @@ const orderController = async (req, res) => {
         res.status(400).json({ message: "can't find the saree" });
         return;
       }
+      if (item.quantity > saree.stock || saree.stock == 0) {
+        res.status(400).json({ message: "Out of Stock" });
+        return;
+      }
+
       orderItems.push({
         sareeId: item.sareeId,
         quantity: item.quantity,
         price: saree.price,
+      });
+
+      sareeToUpdate.push({
+        saree,
+        quantity: item.quantity,
       });
     }
     // Calculate totalAmount
@@ -38,12 +48,41 @@ const orderController = async (req, res) => {
       totalAmount += item.price * item.quantity;
     }
 
+    // Selecting Order
+    const { addressId } = req.body;
+    const address = await addressModel.findOne({
+      _id: addressId,
+      userId,
+    });
+
+    if (!address) {
+      res.status(400).json({
+        message: "Can't find the address",
+      });
+      return;
+    }
+
+    // Checking if stock is available , then only we can create an order.
+
     // Create Order
     const order = await orderModel.create({
       userId,
       items: orderItems,
       totalAmount,
+      shippingAddress: {
+        fullName: address.fullName,
+        phone: address.phone,
+        addressLine: address.addressLine,
+        city: address.city,
+        state: address.state,
+        pincode: address.pincode,
+      },
     });
+
+    for (const item of sareeToUpdate) {
+      item.saree.stock -= item.quantity;
+      await item.saree.save();
+    }
 
     // Clear Cart
     cart.items = [];

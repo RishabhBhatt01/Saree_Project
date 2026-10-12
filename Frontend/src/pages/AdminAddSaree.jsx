@@ -6,6 +6,7 @@ export default function AdminAddSaree() {
   const [form, setForm] = useState({
     name: "",
     price: "",
+    stock: "",
     fabric: "",
     category: "",
     description: "",
@@ -37,7 +38,7 @@ export default function AdminAddSaree() {
     try {
       await createSaree(formData);
       setSuccess("Saree added successfully.");
-      setForm({ name: "", price: "", fabric: "", category: "", description: "" });
+      setForm({ name: "", price: "", stock: "", fabric: "", category: "", description: "" });
       setFile(null);
       e.target.reset();
     } catch (err) {
@@ -75,6 +76,19 @@ export default function AdminAddSaree() {
             min="0"
             required
             value={form.price}
+            onChange={handleChange}
+            className="w-full border border-ink/20 bg-transparent px-4 py-2.5 font-body focus:border-oxblood outline-none"
+          />
+        </div>
+
+        <div>
+          <label className="block font-body text-sm mb-1.5">Stock (units)</label>
+          <input
+            name="stock"
+            type="number"
+            min="0"
+            required
+            value={form.stock}
             onChange={handleChange}
             className="w-full border border-ink/20 bg-transparent px-4 py-2.5 font-body focus:border-oxblood outline-none"
           />

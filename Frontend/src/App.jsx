@@ -9,6 +9,9 @@ import Register from "./pages/Register";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import AdminAddSaree from "./pages/AdminAddSaree";
+import AdminDashboard from "./pages/AdminDashboard";
+import OrderConfirmation from "./pages/OrderConfirmation";
+import OrderHistory from "./pages/OrderHistory";
 
 export default function App() {
   return (
@@ -39,7 +42,32 @@ export default function App() {
           />
 
           <Route
+            path="/order-confirmation"
+            element={
+              <ProtectedRoute>
+                <OrderConfirmation />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute>
+                <OrderHistory />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
             path="/admin"
+            element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/add-saree"
             element={
               <AdminRoute>
                 <AdminAddSaree />
