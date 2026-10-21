@@ -11,18 +11,25 @@ const api = axios.create({
 });
 
 // ---------- Auth ----------
-export const registerUser = (data) =>
-  api.post("/api/auth/register-user", data);
+export const registerUser = (data) => api.post("/api/auth/register-user", data);
 
 export const loginUser = (data) => api.post("/api/auth/login-user", data);
+
+export const verifyEmail = (token, email) =>
+  api.get("/api/auth/verify-email", { params: { token, email } });
+
+export const resendVerification = (email) =>
+  api.post("/api/auth/resend-verification", { email });
+
+export const logoutUser = () => api.post("/api/auth/logout");
 
 export const getCurrentUser = () => api.get("/api/fetch/get-user");
 
 // ---------- Sarees ----------
-export const getSarees = () => api.get("/api/submit-get/getsarees");
 
-export const getOneSaree = (id) =>
-  api.get(`/api/submit-get/getOneSaree/${id}`);
+export const getSarees = (params) =>
+  api.get("/api/submit-get/getsarees", { params });
+export const getOneSaree = (id) => api.get(`/api/submit-get/getOneSaree/${id}`);
 
 // formData must contain: name, price, fabric, category, description, sareeImg (file)
 export const createSaree = (formData) =>
