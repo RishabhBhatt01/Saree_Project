@@ -14,22 +14,6 @@ function StatCard({ label, value }) {
   );
 }
 
-const STATUS_COLORS = {
-  Pending: "bg-gold/20 text-gold",
-  Confirmed: "bg-teal/10 text-teal",
-  Shipped: "bg-teal/10 text-teal",
-  Delivered: "bg-oxblood/10 text-oxblood",
-};
-
-function StatusBadge({ status }) {
-  const cls = STATUS_COLORS[status] || "bg-ink/10 text-ink/60";
-  return (
-    <span className={`px-2 py-0.5 text-xs font-body rounded-sm ${cls}`}>
-      {status}
-    </span>
-  );
-}
-
 export default function AdminDashboard() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -53,7 +37,6 @@ export default function AdminDashboard() {
   const {
     totalUsers,
     totalOrders,
-    recentOrders,
     lowStockSarees,
     outOfStockSarees,
     orderDaily,
@@ -64,12 +47,20 @@ export default function AdminDashboard() {
     <div className="max-w-5xl mx-auto px-6 py-14">
       <div className="flex items-center justify-between mb-1">
         <h1 className="font-display text-3xl">Admin dashboard</h1>
-        <Link
-          to="/admin/add-saree"
-          className="bg-oxblood text-ivory px-4 py-2 text-sm font-body hover:bg-oxblood-dark transition-colors"
-        >
-          + Add saree
-        </Link>
+        <div className="flex gap-3">
+          <Link
+            to="/admin/orders"
+            className="border border-oxblood text-oxblood px-4 py-2 text-sm font-body hover:bg-oxblood/5 transition-colors"
+          >
+            View all orders
+          </Link>
+          <Link
+            to="/admin/add-saree"
+            className="bg-oxblood text-ivory px-4 py-2 text-sm font-body hover:bg-oxblood-dark transition-colors"
+          >
+            + Add saree
+          </Link>
+        </div>
       </div>
       <p className="text-ink/60 font-body text-sm mb-6">
         Store overview for Thread Sutra.
@@ -88,30 +79,6 @@ export default function AdminDashboard() {
           label="This month's sales"
           value={`₹${Number(orderMonthly).toLocaleString("en-IN")}`}
         />
-      </div>
-
-      {/* Recent orders */}
-      <div className="mt-12">
-        <h2 className="font-display text-xl mb-4">Recent orders</h2>
-        {recentOrders.length === 0 ? (
-          <p className="text-ink/50 font-body text-sm">No orders yet.</p>
-        ) : (
-          <div className="space-y-2">
-            {recentOrders.map((order) => (
-              <div
-                key={order._id}
-                className="flex items-center justify-between border border-ink/10 px-4 py-3 font-body text-sm"
-              >
-                <span className="text-ink/60">{order._id}</span>
-                <span>{order.shippingAddress?.fullName}</span>
-                <span className="tabular-nums">
-                  ₹{Number(order.totalAmount).toLocaleString("en-IN")}
-                </span>
-                <StatusBadge status={order.status} />
-              </div>
-            ))}
-          </div>
-        )}
       </div>
 
       {/* Stock alerts */}
