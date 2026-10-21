@@ -62,7 +62,13 @@ export const getOneOrder = (orderId) =>
 export const getAdminDashboardData = () =>
   api.get("/api/dashboard-data/admin-dashboard-data");
 
-export const getAdminOrders = () =>
-  api.get("/api/admin-order/get-admin-orders");
+export const getAdminOrders = (page = 1) =>
+  api.get(`/api/admin-order/get-admin-orders?page=${page}`);
+
+export const getSingleOrderDetailsAdmin = (orderId) =>
+  api.get(`/api/fetch/single-order-details/${orderId}`);
+
+export const updateOrderStatus = (orderId, status) =>
+  api.post(`/api/fetch/update-order-status/${orderId}`, { status });
 
 export default api;
