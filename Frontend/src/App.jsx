@@ -12,6 +12,8 @@ import AdminAddSaree from "./pages/AdminAddSaree";
 import AdminDashboard from "./pages/AdminDashboard";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import OrderHistory from "./pages/OrderHistory";
+import AdminOrders from "./pages/AdminOrders";
+import AdminOrderDetail from "./pages/AdminOrderDetail";
 
 export default function App() {
   return (
@@ -71,6 +73,22 @@ export default function App() {
             element={
               <AdminRoute>
                 <AdminAddSaree />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/orders"
+            element={
+              <AdminRoute>
+                <AdminOrders />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/orders/:orderId"
+            element={
+              <AdminRoute>
+                <AdminOrderDetail />
               </AdminRoute>
             }
           />
