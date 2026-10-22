@@ -2,6 +2,12 @@ const orderModel = require("../models/orders.model");
 const userModel = require("../models/user.model");
 const sareeModel = require("../models/saree.model");
 
+// Only count orders that were actually paid (old orders have no field and still count)
+const countable = { paymentStatus: { $nin: ["Unpaid", "Failed"] } };
+
+// Hide deleted sarees (old sarees without the field still count)
+const activeSaree = { isActive: { $ne: false } };
+
 const adminDashboardController = async (req, res) => {
   try {
     const startOfToday = new Date();
@@ -9,7 +15,6 @@ const adminDashboardController = async (req, res) => {
 
     const startOfTomorrow = new Date(startOfToday);
     startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
-
 
     // Monthly sales
     const startOfMonth = new Date();
@@ -29,54 +34,27 @@ const adminDashboardController = async (req, res) => {
       monthlyOrder,
     ] = await Promise.all([
       userModel.countDocuments(),
-      orderModel.countDocuments(),
-      orderModel.find().sort({ createdAt: -1 }).limit(5),
-      sareeModel.find({
-        stock: {
-          $lte: 100,
-          $gt: 0,
-        },
-      }),
-      sareeModel.find({
-        stock: {
-          $eq: 0,
-        },
-      }),
+      orderModel.countDocuments(countable),
+      orderModel.find(countable).sort({ createdAt: -1 }).limit(5),
+      sareeModel.find({ ...activeSaree, stock: { $lte: 100, $gt: 0 } }),
+      sareeModel.find({ ...activeSaree, stock: { $eq: 0 } }),
       orderModel.aggregate([
         {
           $match: {
-            createdAt: {
-              $gte: startOfToday,
-              $lt: startOfTomorrow,
-            },
+            ...countable,
+            createdAt: { $gte: startOfToday, $lt: startOfTomorrow },
           },
         },
-        {
-          $group: {
-            _id: null,
-            totalSales: {
-              $sum: "$totalAmount",
-            },
-          },
-        },
+        { $group: { _id: null, totalSales: { $sum: "$totalAmount" } } },
       ]),
       orderModel.aggregate([
         {
           $match: {
-            createdAt: {
-              $gte: startOfMonth,
-              $lt: startOfNextMonth,
-            },
+            ...countable,
+            createdAt: { $gte: startOfMonth, $lt: startOfNextMonth },
           },
         },
-        {
-          $group: {
-            _id: null,
-            totalSales: {
-              $sum: "$totalAmount",
-            },
-          },
-        },
+        { $group: { _id: null, totalSales: { $sum: "$totalAmount" } } },
       ]),
     ]);
     const orderDaily = dailyOrder[0]?.totalSales || 0;
