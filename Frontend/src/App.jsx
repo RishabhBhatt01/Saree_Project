@@ -10,6 +10,7 @@ import VerifyEmail from "./pages/VerifyEmail";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import AdminAddSaree from "./pages/AdminAddSaree";
+import AdminEditSaree from "./pages/AdminEditSaree";
 import AdminDashboard from "./pages/AdminDashboard";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import OrderHistory from "./pages/OrderHistory";
@@ -75,6 +76,14 @@ export default function App() {
             element={
               <AdminRoute>
                 <AdminAddSaree />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path="/admin/edit-saree/:id"
+            element={
+              <AdminRoute>
+                <AdminEditSaree />
               </AdminRoute>
             }
           />
