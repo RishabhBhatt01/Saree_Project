@@ -1,5 +1,10 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getCurrentUser, loginUser, registerUser } from "../api/client";
+import {
+  getCurrentUser,
+  loginUser,
+  registerUser,
+  logoutUser,
+} from "../api/client";
 
 const AuthContext = createContext(null);
 
@@ -7,42 +12,32 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [checkingAuth, setCheckingAuth] = useState(true);
 
-  const refreshUser = async () => {
-    try {
-      const res = await getCurrentUser();
-      setUser(res.data.user);
-    } catch {
-      setUser(null);
-    } finally {
-      setCheckingAuth(false);
-    }
-  };
-
+  // On app load: ask the backend who we are (the cookie is httpOnly)
   useEffect(() => {
-    refreshUser();
+    getCurrentUser()
+      .then((res) => setUser(res.data.user))
+      .catch(() => setUser(null))
+      .finally(() => setCheckingAuth(false));
   }, []);
 
+  // Login returns the user, so no extra get-user call is needed
   const login = async (email, password) => {
-    // Login response currently has no user data, only a success message
-    // and an httpOnly cookie — so after login we call get-user separately
-    // to actually populate the user in state.
-    await loginUser({ email, password });
-    await refreshUser();
+    const res = await loginUser({ email, password });
+    setUser(res.data.user);
   };
 
+  // Register no longer logs the user in; they must verify their email first
   const register = async (username, email, password) => {
     const res = await registerUser({ username, email, password });
-    // Register does return the user object, but also refresh from
-    // get-user so state always comes from one consistent source.
-    await refreshUser();
     return res.data;
   };
 
-  const logout = () => {
-    // NOTE: there is no logout endpoint on the backend yet (the auth
-    // cookie is httpOnly, so the frontend can't clear it directly).
-    // This clears local UI state only — add a POST /api/auth/logout
-    // route later that does res.clearCookie("token") for a real logout.
+  const logout = async () => {
+    try {
+      await logoutUser(); // clears the httpOnly cookie on the server
+    } catch {
+      // even if the request fails, clear local state
+    }
     setUser(null);
   };
 
@@ -50,7 +45,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, checkingAuth, login, register, logout, isAdmin, refreshUser }}
+      value={{ user, checkingAuth, login, register, logout, isAdmin }}
     >
       {children}
     </AuthContext.Provider>
