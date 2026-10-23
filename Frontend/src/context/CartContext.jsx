@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useContext, useState, useCallback, useEffect } from "react";
 import {
   addToCart as apiAddToCart,
   getCart as apiGetCart,
@@ -33,6 +33,11 @@ export function CartProvider({ children }) {
       if (!silent) setLoading(false);
     }
   }, [user]);
+
+  // Keep the cart in sync with auth: load on login, clear on logout
+  useEffect(() => {
+    refreshCart(true);
+  }, [refreshCart]);
 
   const addItem = async (sareeId, quantity = 1) => {
     await apiAddToCart(sareeId, quantity);
