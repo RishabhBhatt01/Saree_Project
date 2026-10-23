@@ -1,23 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getOrders } from "../api/client";
-import ThreadDivider from "../components/ThreadDivider";
-
-const STATUS_COLORS = {
-  Pending: "bg-gold/20 text-gold",
-  Confirmed: "bg-teal/10 text-teal",
-  Shipped: "bg-teal/10 text-teal",
-  Delivered: "bg-oxblood/10 text-oxblood",
-};
-
-function StatusBadge({ status }) {
-  const cls = STATUS_COLORS[status] || "bg-ink/10 text-ink/60";
-  return (
-    <span className={`px-2 py-0.5 text-xs font-body rounded-sm ${cls}`}>
-      {status || "Pending"}
-    </span>
-  );
-}
+import PageHeader from "../components/PageHeader";
+import StatusBadge from "../components/StatusBadge";
 
 export default function OrderHistory() {
   const [orders, setOrders] = useState([]);
@@ -32,50 +17,70 @@ export default function OrderHistory() {
   }, []);
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-14">
-      <h1 className="font-display text-3xl mb-1">My orders</h1>
-      <p className="text-ink/60 font-body text-sm mb-6">
-        Your past purchases from Thread Sutra.
-      </p>
-      <ThreadDivider variant="teal" />
+    <div className="bg-weave">
+      <div className="mx-auto max-w-3xl px-6 py-12">
+        <PageHeader
+          eyebrow="Your purchases"
+          title="My orders"
+          subtitle="Your past purchases from Thread Sutra."
+        />
 
-      {loading && (
-        <p className="text-ink/50 font-body text-sm mt-8">Loading orders…</p>
-      )}
-      {error && <p className="text-oxblood font-body text-sm mt-8">{error}</p>}
+        {loading && (
+          <p className="font-body text-sm text-ink/50">Loading orders…</p>
+        )}
+        {error && <p className="font-body text-sm text-oxblood">{error}</p>}
 
-      {!loading && !error && orders.length === 0 && (
-        <div className="mt-10 text-center">
-          <p className="text-ink/60 font-body mb-4">
-            You haven't placed any orders yet.
-          </p>
-          <Link to="/" className="text-oxblood font-body hover:underline">
-            Browse sarees
-          </Link>
-        </div>
-      )}
-
-      <div className="mt-8 space-y-4">
-        {orders.map((order) => (
-          <div key={order._id} className="border border-ink/10 p-5">
-            <div className="flex justify-between items-start mb-3">
-              <p className="font-body text-xs text-ink/50">
-                Order ID: {order._id}
-              </p>
-              <div className="flex items-center gap-3">
-                <StatusBadge status={order.status} />
-                <p className="font-display text-lg tabular-nums">
-                  ₹{Number(order.totalAmount).toLocaleString("en-IN")}
-                </p>
-              </div>
-            </div>
-            <p className="font-body text-sm text-ink/70">
-              {order.items.length} item{order.items.length !== 1 ? "s" : ""} ·
-              Shipping to {order.shippingAddress?.city},{" "}
-              {order.shippingAddress?.state}
+        {!loading && !error && orders.length === 0 && (
+          <div className="mx-auto max-w-sm rounded-2xl border border-dashed border-clay/40 bg-ivory p-10 text-center">
+            <div className="mx-auto mb-4 h-20 w-16 rounded-t-full border border-dashed border-clay/50 bg-linen" />
+            <p className="mb-4 font-body text-ink/60">
+              You haven't placed any orders yet.
             </p>
+            <Link
+              to="/"
+              className="rounded-full bg-teal px-6 py-2.5 font-body text-sm text-ivory hover:bg-teal-dark"
+            >
+              Browse sarees
+            </Link>
           </div>
-        ))}
+        )}
+
+        <div className="space-y-4">
+          {orders.map((order) => (
+            <div
+              key={order._id}
+              className="rounded-2xl border border-dashed border-clay/40 bg-ivory p-5 transition hover:-translate-y-0.5 hover:shadow-md"
+            >
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="font-display text-lg">
+                    Order #{order._id.slice(-6).toUpperCase()}
+                  </p>
+                  {order.createdAt && (
+                    <p className="font-body text-xs text-ink/50">
+                      {new Date(order.createdAt).toLocaleDateString("en-IN", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-3">
+                  <StatusBadge status={order.status} />
+                  <p className="font-display text-xl tabular-nums text-clay">
+                    ₹{Number(order.totalAmount).toLocaleString("en-IN")}
+                  </p>
+                </div>
+              </div>
+              <p className="mt-3 font-body text-sm text-ink/70">
+                {order.items.length} item{order.items.length !== 1 ? "s" : ""} ·
+                Shipping to {order.shippingAddress?.city},{" "}
+                {order.shippingAddress?.state}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

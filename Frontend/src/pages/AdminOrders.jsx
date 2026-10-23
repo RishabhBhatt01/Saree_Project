@@ -1,23 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getAdminOrders } from "../api/client";
-import ThreadDivider from "../components/ThreadDivider";
+import PageHeader from "../components/PageHeader";
+import StatusBadge from "../components/StatusBadge";
 
-const STATUS_COLORS = {
-  Pending: "bg-gold/20 text-gold",
-  Confirmed: "bg-teal/10 text-teal",
-  Shipped: "bg-teal/10 text-teal",
-  Delivered: "bg-oxblood/10 text-oxblood",
-};
-
-function StatusBadge({ status }) {
-  const cls = STATUS_COLORS[status] || "bg-ink/10 text-ink/60";
-  return (
-    <span className={`px-2 py-0.5 text-xs font-body rounded-sm ${cls}`}>
-      {status}
-    </span>
-  );
-}
+const pageBtn =
+  "rounded-full border border-clay/40 px-5 py-2 font-body text-sm transition hover:border-clay hover:bg-clay/10 disabled:opacity-30 disabled:hover:bg-transparent";
 
 export default function AdminOrders() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -39,63 +27,69 @@ export default function AdminOrders() {
   const goToPage = (p) => setSearchParams({ page: p });
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-14">
-      <h1 className="font-display text-3xl mb-1">All orders</h1>
-      <p className="text-ink/60 font-body text-sm mb-6">
-        Every order placed on Thread Sutra, newest first.
-      </p>
-      <ThreadDivider variant="oxblood" />
+    <div className="bg-weave">
+      <div className="mx-auto max-w-4xl px-6 py-12">
+        <PageHeader
+          eyebrow="Admin"
+          title="All orders"
+          subtitle="Every order placed on Thread Sutra, newest first."
+        />
 
-      {loading && (
-        <p className="text-ink/50 font-body text-sm mt-8">Loading orders…</p>
-      )}
-      {error && <p className="text-oxblood font-body text-sm mt-8">{error}</p>}
+        {loading && (
+          <p className="font-body text-sm text-ink/50">Loading orders…</p>
+        )}
+        {error && <p className="font-body text-sm text-oxblood">{error}</p>}
 
-      {!loading && data && (
-        <>
-          <div className="mt-8 space-y-2">
-            {data.orders.length === 0 ? (
-              <p className="text-ink/50 font-body text-sm">No orders found.</p>
-            ) : (
-              data.orders.map((order) => (
-                <button
-                  key={order._id}
-                  onClick={() => navigate(`/admin/orders/${order._id}`)}
-                  className="w-full flex items-center justify-between border border-ink/10 px-4 py-3 font-body text-sm text-left hover:border-oxblood transition-colors"
-                >
-                  <span className="text-ink/60">{order._id}</span>
-                  <span>{order.shippingAddress?.fullName}</span>
-                  <span className="tabular-nums">
-                    ₹{Number(order.totalAmount).toLocaleString("en-IN")}
-                  </span>
-                  <StatusBadge status={order.status} />
-                </button>
-              ))
-            )}
-          </div>
+        {!loading && data && (
+          <>
+            <div className="space-y-3">
+              {data.orders.length === 0 ? (
+                <p className="font-body text-sm text-ink/50">No orders found.</p>
+              ) : (
+                data.orders.map((order) => (
+                  <button
+                    key={order._id}
+                    onClick={() => navigate(`/admin/orders/${order._id}`)}
+                    className="flex w-full flex-wrap items-center justify-between gap-3 rounded-2xl border border-dashed border-clay/40 bg-ivory px-5 py-4 text-left font-body text-sm transition hover:-translate-y-0.5 hover:border-clay hover:shadow-md"
+                  >
+                    <span className="font-display text-base">
+                      #{order._id.slice(-6).toUpperCase()}
+                    </span>
+                    <span className="text-ink/70">
+                      {order.shippingAddress?.fullName}
+                    </span>
+                    <span className="tabular-nums text-clay">
+                      ₹{Number(order.totalAmount).toLocaleString("en-IN")}
+                    </span>
+                    <StatusBadge status={order.status} />
+                  </button>
+                ))
+              )}
+            </div>
 
-          {/* Pagination */}
-          <div className="flex items-center justify-between mt-8">
-            <button
-              onClick={() => goToPage(page - 1)}
-              disabled={!data.hasPreviousPage}
-              className="px-4 py-2 border border-ink/20 font-body text-sm hover:border-oxblood disabled:opacity-30 disabled:hover:border-ink/20"
-            >
-              ← Previous
-            </button>
-            <span className="font-body text-sm text-ink/60">
-              Page {data.currentPage} of {data.totalPages || 1} ({data.totalOrders} orders)
-            </span>
-            <button
-              onClick={() => goToPage(page + 1)}
-              disabled={!data.hasNextPage}
-              className="px-4 py-2 border border-ink/20 font-body text-sm hover:border-oxblood disabled:opacity-30 disabled:hover:border-ink/20"
-            >
-              Next →
-            </button>
-          </div>
-        </>
-      )}
+            <div className="mt-8 flex items-center justify-between">
+              <button
+                onClick={() => goToPage(page - 1)}
+                disabled={!data.hasPreviousPage}
+                className={pageBtn}
+              >
+                ← Previous
+              </button>
+              <span className="font-body text-sm text-ink/60">
+                Page {data.currentPage} of {data.totalPages || 1} (
+                {data.totalOrders} orders)
+              </span>
+              <button
+                onClick={() => goToPage(page + 1)}
+                disabled={!data.hasNextPage}
+                className={pageBtn}
+              >
+                Next →
+              </button>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }
