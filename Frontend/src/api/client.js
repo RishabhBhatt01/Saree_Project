@@ -37,6 +37,14 @@ export const createSaree = (formData) =>
     headers: { "Content-Type": "multipart/form-data" },
   });
 
+export const updateSaree = (id, formData) =>
+  api.put(`/api/submit-get/update-saree/${id}`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
+export const deleteSaree = (id) =>
+  api.delete(`/api/submit-get/delete-saree/${id}`);
+
 // ---------- Cart ----------
 export const addToCart = (sareeId, quantity) =>
   api.post("/api/cart/add-to-cart", { sareeId, quantity });
@@ -57,6 +65,12 @@ export const submitAddress = (data) =>
 export const getAddresses = () => api.get("/api/address/get-address");
 
 // ---------- Orders ----------
+export const verifyPayment = (data) =>
+  api.post("/api/order/verify-payment", data);
+
+export const cancelPayment = (orderId) =>
+  api.post("/api/order/cancel-payment", { orderId });
+
 export const createOrder = (addressId) =>
   api.post("/api/order/create-order", { addressId });
 
